@@ -29,6 +29,33 @@ class Problems extends CI_Controller
 
 
 	/**
+	* Download problem's template
+	**/
+	public function template($assignment_id = NULL, $problem_id = 1){
+		// Find pdf file
+		if ($assignment_id === NULL)
+			$assignment_id = $this->user->selected_assignment['id'];
+
+		if ($assignment_id == 0){
+			show_error("Pleas select an assignment first");
+		}
+		if ($problem_id === NULL)
+			show_error("File not found");
+		
+		$pattern = rtrim($this->settings_model->get_setting('assignments_root'),'/')."/assignment_{$assignment_id}/p{$problem_id}/template.cpp";
+
+		$pdf_files = glob($pattern);
+		if ( ! $pdf_files )
+			show_error("File not found");
+
+		// Download the file to browser
+		$this->load->helper('download')->helper('file');
+		$filename = shj_basename($pdf_files[0]);
+		force_download($filename, file_get_contents($pdf_files[0]), TRUE);
+
+	}
+
+	/**
 	 * Displays detail description of given problem
 	 *
 	 * @param int $assignment_id
@@ -46,6 +73,9 @@ class Problems extends CI_Controller
 			$this->twig->display('pages/problems.twig', $data);	
 			return;
 		} 
+
+		// $this->user->select_assignment($assignment_id);
+		// $this->assignment = $this->assignment_model->assignment_info($assignment_id);
 
 		$assignment = $this->assignment_model->assignment_info($assignment_id);
 		
@@ -75,6 +105,7 @@ class Problems extends CI_Controller
 			'description' => '<p>Description not found</p>',
 			'allowed_languages' => $languages,
 			'has_pdf' => glob("$problem_dir/*.pdf") != FALSE
+			,'has_template' => glob("$problem_dir/template.cpp") != FALSE
 		);
 
 		$path = "$problem_dir/desc.html";
@@ -82,6 +113,7 @@ class Problems extends CI_Controller
 			$data['problem']['description'] = file_get_contents($path);
 
 		if ( $assignment['id'] == 0
+			OR $assignment_id != $this->user->selected_assignment['id']
 			OR ( $this->user->level == 0 && ! $assignment['open'] )
 			OR (shj_now() < strtotime($assignment['start_time']) && $this->user->level == 0)
 			OR ( strtotime($assignment['start_time']) < strtotime($assignment['finish_time'])

@@ -113,14 +113,17 @@ class Queueprocess extends CI_Controller
 			// Running tester (judging the code) //
 			///////////////////////////////////////
 			putenv('LANG=en_US.UTF-8');
+			putenv('PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games');
 			$output = trim(shell_exec($cmd));
 
 
 			// Deleting the jail folder, if still exists
 			shell_exec("cd $tester_path; rm -rf jail*");
 
+			echo $output;
+
 			// Saving judge result
-			if ( is_numeric($output) || $output === 'Compilation Error' || $output === 'Syntax Error' )
+			//if ( is_numeric($output) || $output === 'Compilation Error' || $output === 'Syntax Error' )
 			{
 				shell_exec("mv $userdir/result.html $userdir/result-{$submit_id}.html");
 				shell_exec("mv $userdir/log $userdir/log-{$submit_id}");

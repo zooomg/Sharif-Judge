@@ -50,7 +50,7 @@ For running Sharif Judge, a Linux server with following requirements is needed:
   7. Log in with your admin account.
   8. **[IMPORTANT]** Move folders `tester` and `assignments` somewhere outside your public directory. Then save their full path in `Settings` page. **These two folders must be writable by PHP.** Submitted files will be stored in `assignments` folder. So it should be somewhere not publicly accessible.
   9. Make 'tester/tester.sh' runnable by your account.(Linux or Ubuntu)
-'''chmod +x tester.sh
+     chmod +x tester.sh
   10. **[IMPORTANT]** [Secure Sharif Judge](https://github.com/mjnaderi/Sharif-Judge/blob/docs/v1.4/security.md)
 
 ## After Installation
